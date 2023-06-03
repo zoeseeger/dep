@@ -8,6 +8,13 @@ To automate the standard data engineering process at MECCA by auto-populating DD
 - save time on rewriting code/finding code to copy;
 - follow best practices in terms of naming conventions, code formatting and layout
 ___
+## **Requirements**
+- Windows machine
+- bash (e.g. git-bash)
+- Python3
+- pywin32
+- beautifulsoup4
+___
 ## **Quick Start**
 
 1. Create a confluence/word document using one of the provided templates:

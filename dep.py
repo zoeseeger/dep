@@ -1,4 +1,4 @@
-#!/c/Users/zoeseeger/Anaconda3/python
+#!/usr/bin/env python
 
 import sys
 import argparse
