@@ -1,0 +1,120 @@
+{
+    "jira_id": "GID-4521",
+    "action": "new_table",
+    "output_dir": "dep-output",
+    "user": "Zoe Seeger",
+    "user_email": "zoe.seeger@mecca.com.au",
+    "description": "A historical table of inventory level projection aggregated to the level of week and item",
+    "subject_area": "Supply Operations",
+    "schedule": "Sunday 10PM",
+    "staging_table": false,
+    "ddl_file": "GID-4521_dwh_agg_hist_item_level_projection_ddl.sql",
+    "dag_file": "dwh_agg_hist_item_level_projection.py",
+    "doc_file": "Unit-Test-GID-4521_dwh_agg_hist_item_level_projection.md",
+    "table_structures": [
+        {
+            "schema": "dwh",
+            "table_name": "agg_hist_item_level_projection",
+            "schema_table": "dwh.agg_hist_item_level_projection",
+            "import_method": "incremental",
+            "table_description": "A historical table of inventory level projection aggregated to the level of week and item",
+            "columns": [
+                "forecast_creation_week",
+                "item_code",
+                "week_start_date",
+                "closing_stock_on_hand",
+                "constrained_demand",
+                "unconstrained_demand",
+                "projected_lost_sales",
+                "end_of_period_safety_stock",
+                "end_of_period_model_stock",
+                "end_of_period_in_transit",
+                "record_created"
+            ],
+            "types": [
+                "text",
+                "text",
+                "date",
+                "numeric",
+                "numeric",
+                "numeric",
+                "numeric",
+                "numeric",
+                "numeric",
+                "numeric",
+                "timestamptz"
+            ],
+            "nullables": [
+                "NOT NULL",
+                "NOT NULL",
+                "NOT NULL",
+                "NULL",
+                "NULL",
+                "NULL",
+                "NULL",
+                "NULL",
+                "NULL",
+                "NULL",
+                "NOT NULL"
+            ],
+            "descriptions": [
+                "Fiscal year, month, week projections created",
+                "Item code",
+                "The start date of the week that the values are projected for",
+                "The amount of stock the item-site combination is projected to end the week with on hand",
+                "The projected sales or tester consumption of the item at the location within the week, constrained by projected available stock on hand",
+                "The projected sales or tester consumption of the item at the location within the week",
+                "The projected sales or tester consumption of the item at the location within the week that are expected to not occur due to running out of stock",
+                "The planned minimum stock level at the end of the week",
+                "The planned model stock at the end of the week (safety stock + replenishment cycle stock / 2)",
+                "The amount of stock the item-site combination is projected to end the week with in transit",
+                "Date record created"
+            ],
+            "source_columns": [
+                "fiscal_year_month_week",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "source_alias": [
+                "dd",
+                "jilp",
+                "jilp",
+                "jilp",
+                "jilp",
+                "jilp",
+                "jilp",
+                "jilp",
+                "jilp",
+                "jilp",
+                ""
+            ],
+            "sources": {
+                "dwh.dim_date": {
+                    "alias": "dd",
+                    "source_table": "dwh.dim_date"
+                },
+                "sys_justenough.je_inventory_level_projection": {
+                    "alias": "jilp",
+                    "source_table": "sys_justenough.je_inventory_level_projection"
+                }
+            },
+            "indexes": [],
+            "primary_keys": [
+                "forecast_creation_week",
+                "item_code",
+                "week_start_date"
+            ],
+            "foreign_keys": []
+        }
+    ],
+    "view_structures": [],
+    "debug": true
+}
