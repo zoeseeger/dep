@@ -36,15 +36,18 @@ class DagInput:
         for self.table in self.table_structures:
 
             action = self.action
-            method = self.table.import_method
+            import_method = self.table.import_method
+            insert_method = self.table.insert_method
             final = self.table.final_table
             staging = self.staging_table
 
             schema = self.table.schema
             table_name = self.table.table_name
 
+
+
             # new_table incremental
-            if action == "new_table" and method == "incremental" and staging:
+            if action == "new_table" and import_method == "incremental" and insert_method == "upsert" and staging:
 
                 # staging
                 if not final:
@@ -70,7 +73,7 @@ class DagInput:
                     self.runQueryCommand()
 
             # new_table incremental main no staging table
-            elif action == "new_table" and method == "incremental" and not staging:
+            elif action == "new_table" and import_method == "incremental" and insert_method == "upsert" and not staging:
 
                 self.addTaskAsFunction(
                     "upsert", f"Upsert from source -> {schema}.{table_name}."
@@ -81,8 +84,34 @@ class DagInput:
                 self.updateIncrementFromSQL()
                 self.runQueryCommand()
 
+            elif action == "new_table" and import_method == "incremental" and insert_method == "scd2" and staging:
+                ***
+                # staging
+                if not final:
+                    self.addTaskAsFunction(
+                        "insert",
+                        f"Insert and incremental load from source -> {schema}.{table_name}.",
+                    )
+                    self.glindaHook()
+                    self.getIncrementFromSQL()
+                    self.saveIncrementToSQL()
+                    self.truncateSQL()
+                    self.insertSQL(where=True)
+                    self.runQueryCommand()
+
+                # main
+                else:
+                    self.addTaskAsFunction(
+                        "upsert", f"Upsert from stg -> {schema}.{table_name}."
+                    )
+                    self.glindaHook()
+                    self.upsertSQL(where=False)
+                    self.incrementFrom2AsIncrementFromSQL()
+                    self.runQueryCommand()
+
+
             # import incremental
-            elif action == "import" and method == "incremental":
+            elif action == "import" and import_method == "incremental" and insert_method == "upsert":
 
                 # tmp
                 if not final:
@@ -108,7 +137,7 @@ class DagInput:
                     self.runQueryCommand()
 
             # import full load tmp
-            elif action == "import" and method == "full":
+            elif action == "import" and import_method == "full" and insert_method == "upsert":
 
                 # tmp
                 if not final:
@@ -132,7 +161,7 @@ class DagInput:
 
             else:
                 sys.exit(
-                    f"Combination of action={action}, import_method={method} has not been written."
+                    f"Error: Combination of action={action}, import_method={import_method}, insert_method={insert_method} has not been written. exiting . . ."
                 )
 
         # views

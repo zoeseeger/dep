@@ -32,7 +32,7 @@ class Main():
         """Determine the options for the files."""
 
         # get default options
-        self.options = Options(self.args.outdir, debug=True)
+        self.options = Options(self.args.outdir, debug=False)
 
         # read confluence
         if not self.args.nodoc:

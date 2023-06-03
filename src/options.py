@@ -208,6 +208,14 @@ class Options:
                 elif head_text == "indexes" or head_text == "index":
                     self.table_structures[-1].updateAttribute("indexes", getUnderHeaderHtml(head))
 
+                elif head_text == "update method":
+                    lines = getUnderHeaderHtml(head)
+                    for line in lines:
+                        if "scd2" in line.lower():
+                            self.table_structures[-1].updateAttribute("insert_method", "scd2")
+                        elif "upsert" in line.lower():
+                            self.table_structures[-1].updateAttribute("insert_method", "upsert")
+
             elif self.action == "import":
 
                 if head_text == "import method":
@@ -324,6 +332,7 @@ class Options:
                         schema = table["schema"],
                         table_name = table["table_name"],
                         import_method = table["import_method"],
+                        insert_method = table["insert_method"],
                         columns = table["columns"],
                         types = table["types"],
                         nullables = table["nullables"],

@@ -9,7 +9,8 @@ class Table:
         self,
         schema:str,
         table_name:str,
-        import_method:str="incremental", # full & soft delete OR incremental & upsert
+        import_method:str="incremental", # "full" & soft delete OR "incremental" & upsert
+        insert_method:str="upsert", # upsert or scd2
         columns:list=None,
         types:list=None,
         nullables:list=None,
@@ -30,6 +31,7 @@ class Table:
         self.table_name = table_name
         self.schema_table = f"{schema}.{table_name}"
         self.import_method = import_method
+        self.insert_method = insert_method
         self.table_description = table_description
         # not for user
         self.base_schema_table = base_schema_table

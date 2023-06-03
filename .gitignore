@@ -1,6 +1,7 @@
 *html
 *_files
 dep-output
+~*.doc
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
