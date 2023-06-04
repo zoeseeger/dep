@@ -17,6 +17,7 @@
             "table_name": "orderitemadjustmentreasons",
             "schema_table": "sys_new.orderitemadjustmentreasons",
             "import_method": "full",
+            "insert_method": "upsert",
             "table_description": "Order adjustment reasons for orderitems",
             "columns": [
                 "order_item_adjustment_reason_id",
@@ -77,6 +78,7 @@
             "table_name": "orderitems",
             "schema_table": "sys_new.orderitems",
             "import_method": "incremental",
+            "insert_method": "upsert",
             "table_description": "Tester order items",
             "columns": [
                 "order_item_id",

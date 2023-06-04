@@ -26,13 +26,14 @@ class Main():
         parser.add_argument('-o', '--outdir', type=str, default="dep-output", help='output directory')
         parser.add_argument('--nojson', action='store_true', help='don\'t read in json input')
         parser.add_argument('--nodoc', action='store_true', help='don\'t read in doc input')
+        parser.add_argument('--debug', action='store_true', help='don\'t make html if exists')
         self.args = parser.parse_args()
 
     def determineRunOptions(self):
         """Determine the options for the files."""
 
         # get default options
-        self.options = Options(self.args.outdir, debug=False)
+        self.options = Options(self.args.outdir, debug=self.args.debug)
 
         # read confluence
         if not self.args.nodoc:

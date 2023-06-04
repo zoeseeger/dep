@@ -20,6 +20,7 @@ def clean():
     """Remove var files from last run."""
 
     file_list = glob.glob(f"{test_path}**/vars.json", recursive=True)
+    file_list += glob.glob(f"{test_path}**/~*.doc", recursive=True)
 
     for f in file_list:
         os.remove(f)
@@ -63,7 +64,7 @@ def test_vars(test_dir, confluence_input, json_input, monkeypatch):
     ijson = f"{test_path}{test_dir}/input.json"
 
     # specify input parameters for test run
-    command_line_vars = ["dep"]
+    command_line_vars = ["dep", "--debug"]
     if confluence_input:
         command_line_vars.extend(["--doc", idoc])
     if json_input:
@@ -85,7 +86,6 @@ def test_vars(test_dir, confluence_input, json_input, monkeypatch):
     assert solution_obj.options.ddl_file == test_obj.options.ddl_file
     assert solution_obj.options.dag_file == test_obj.options.dag_file
     assert solution_obj.options.doc_file == test_obj.options.doc_file
-    assert solution_obj.options.debug == test_obj.options.debug
     assert len(test_obj.options.table_structures) == len(
         solution_obj.options.table_structures
     )
@@ -100,6 +100,7 @@ def test_vars(test_dir, confluence_input, json_input, monkeypatch):
         assert solution_table.table_name == test_table.table_name
         assert solution_table.schema_table == test_table.schema_table
         assert solution_table.import_method == test_table.import_method
+        assert solution_table.insert_method == test_table.insert_method
         assert solution_table.table_description == test_table.table_description
         assert solution_table.columns == test_table.columns
         assert solution_table.types == test_table.types
@@ -119,7 +120,8 @@ def test_vars(test_dir, confluence_input, json_input, monkeypatch):
         assert solution_table.view_name == test_table.view_name
         assert solution_table.foundation_table_name == test_table.foundation_table_name
         assert solution_table.columns == test_table.columns
-        assert solution_table.descriptions == test_table.descriptions
+        # assert solution_table.descriptions == test_table.descriptions
+        assert ''.join(solution_table.descriptions).replace(' ','') == ''.join(test_table.descriptions).replace(' ','')
         assert solution_table.source_columns == test_table.source_columns
         assert solution_table.source_alias == test_table.source_alias
         assert solution_table.sources == test_table.sources

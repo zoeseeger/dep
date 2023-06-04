@@ -17,6 +17,7 @@
             "table_name": "fct_loss_prevention_sale",
             "schema_table": "dwh.fct_loss_prevention_sale",
             "import_method": "incremental",
+            "insert_method": "upsert",
             "table_description": "xxx description",
             "columns": [
                 "date_key",
@@ -124,7 +125,7 @@
                 "\"Store\" or \"Online\"",
                 "True if purchase uses employee discount",
                 "True if transaction date between employee hire and termination dates",
-                "True if:reason code in ('CRF','CRR',    'CRO', 'DIS', 'DIT') for damaged/reaction/incorrectreturned within 90    days for customersreturned within 30    days for employee purchases to any tender or 90 days to a gift card or    used in another purchaseNULL for non-returns and returns without an invoice of purchaseReturn Policy for customers from our website:Return Policy for employee transactions:",
+                "True if:reason code    in ('CRF','CRR', 'CRO', 'DIS', 'DIT') for    damaged/reaction/incorrectreturned within 90    days for customersreturned within 30    days for employee purchases to any tender or 90 days to a gift card or    used in another purchaseNULL for non-returns and returns without an invoice of purchaseReturn Policy for customers from our website:Return Policy for employee transactions:",
                 "True if the customer received a greater return amount than originally paid",
                 "True if the customer is an employee and used Endless Asle",
                 "Date record created in table",

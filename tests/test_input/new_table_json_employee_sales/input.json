@@ -5,6 +5,7 @@
             "table_name": "fct_loss_prevention_sale",
             "schema_table": "dwh.fct_loss_prevention_sale",
             "import_method": "incremental",
+            "insert_method": "upsert",
             "table_description": "xxx description",
             "columns": [
                 "date_key",

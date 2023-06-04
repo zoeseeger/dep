@@ -17,6 +17,7 @@
             "table_name": "agg_hist_item_level_projection",
             "schema_table": "dwh.agg_hist_item_level_projection",
             "import_method": "incremental",
+            "insert_method": "upsert",
             "table_description": "A historical table of inventory level projection aggregated to the level of week and item",
             "columns": [
                 "forecast_creation_week",

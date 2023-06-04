@@ -44,8 +44,6 @@ class DagInput:
             schema = self.table.schema
             table_name = self.table.table_name
 
-
-
             # new_table incremental
             if action == "new_table" and import_method == "incremental" and insert_method == "upsert" and staging:
 
@@ -85,7 +83,6 @@ class DagInput:
                 self.runQueryCommand()
 
             elif action == "new_table" and import_method == "incremental" and insert_method == "scd2" and staging:
-                ***
                 # staging
                 if not final:
                     self.addTaskAsFunction(
@@ -105,13 +102,13 @@ class DagInput:
                         "upsert", f"Upsert from stg -> {schema}.{table_name}."
                     )
                     self.glindaHook()
-                    self.upsertSQL(where=False)
+                    self.scd2StagingSQL()
+                    self.insertSQL(where=False)
                     self.incrementFrom2AsIncrementFromSQL()
                     self.runQueryCommand()
 
-
             # import incremental
-            elif action == "import" and import_method == "incremental" and insert_method == "upsert":
+            if action == "import" and import_method == "incremental" and insert_method == "upsert":
 
                 # tmp
                 if not final:
@@ -524,6 +521,46 @@ class DagInput:
         # add to list of sql queries
         self.queries.append(f"sql_delete_{self.table.schema}")
 
+    def scd2StagingSQL(self):
+        """Update SQL according to SCD2 with a staging table. If primary key in in staging and target then target is old value."""
+
+        # main source
+        src_table = "xxx_table"
+        src_alias = "xxx"
+        for _, dict_ in self.table.sources.items():
+            src_table = dict_["source_table"]
+            src_alias = dict_["alias"]
+            break
+
+        self.lines.extend([
+            f'    sql_update_{self.table.schema} = f"""',
+            f"        UPDATE",
+            f"             {self.table.schema}.{self.table.table_name} AS upd",
+            f"        SET",
+            f"            expiration_date = now()",
+            f"        WHERE",
+            f"            EXISTS (",
+            f"                SELECT",
+            f"                    *",
+            f"                FROM",
+            f"                    {src_table} {src_alias}",
+            f"                WHERE",
+        ])
+
+        if self.table.primary_keys:
+            for i, primary_key in enumerate(self.table.primary_keys):
+                if i == 0:
+                    self.lines.append(f"                    upd.{primary_key} = {src_alias}.{primary_key}")
+                else:
+                    self.lines.append(f"                    AND upd.{primary_key} = {src_alias}.{primary_key}")
+        else:
+            self.lines.append(f"                    upd.xxx = {src_alias}.xxx")
+
+        self.lines.append(f"                    AND expiration_date IS NULL;")
+
+        # add to list of sql queries
+        self.queries.append(f"sql_update_{self.table.schema}")
+
     def incrementFrom2AsIncrementFromSQL(self):
         """SQL query to update table parameters."""
 
@@ -582,7 +619,7 @@ class DagInput:
         source_columns = self.table.source_columns
         aliases = self.table.source_alias
 
-        skip_columns = ["record_created", "record_updated", "record_deleted"]
+        skip_columns = ["record_created", "record_updated", "record_deleted", "record_effective", "record_expiration"]
 
         i = 0
         for column in columns:
