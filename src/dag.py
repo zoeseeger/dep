@@ -108,7 +108,7 @@ class DagInput:
                     self.runQueryCommand()
 
             # import incremental
-            if action == "import" and import_method == "incremental" and insert_method == "upsert":
+            elif action == "import" and import_method == "incremental" and insert_method == "upsert":
 
                 # tmp
                 if not final:
