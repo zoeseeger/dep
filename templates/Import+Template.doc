@@ -1,11 +1,11 @@
-Date: Fri, 2 Jun 2023 01:40:32 +0000 (UTC)
-Message-ID: <723770972.7.1685670032422@f45d34f1d536>
+Date: Fri, 9 Jun 2023 06:44:30 +0000 (UTC)
+Message-ID: <1044025713.29.1686293070735@4858e98758e7>
 Subject: Exported From Confluence
 MIME-Version: 1.0
 Content-Type: multipart/related; 
-	boundary="----=_Part_6_1545922282.1685670032420"
+	boundary="----=_Part_28_655327811.1686293070735"
 
-------=_Part_6_1545922282.1685670032420
+------=_Part_28_655327811.1686293070735
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Content-Location: file:///C:/exported.html
@@ -17,7 +17,7 @@ Content-Location: file:///C:/exported.html
 <head>
     <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8=
 ">
-    <title>schema_name.table_name</title>
+    <title>Import Template</title>
     <!--[if gte mso 9]>
     <xml>
         <o:OfficeDocumentSettings>
@@ -230,229 +230,209 @@ d of the content */
     </style>
 </head>
 <body>
-    <h1>schema_name.table_name</h1>
+    <h1>Import Template</h1>
     <div class=3D"Section1">
-        <style type=3D"text/css">/*<![CDATA[*/
-div.rbtoc1685670031758 {padding: 0px;}
-div.rbtoc1685670031758 ul {list-style: disc;margin-left: 0px;}
-div.rbtoc1685670031758 li {margin-left: 0px;padding-left: 0px;}
-
-/*]]>*/</style>
-<div class=3D"toc-macro rbtoc1685670031758">=20
-<ul class=3D"toc-indentation">=20
-<li><a href=3D"#schema_name.table_name-Overview">Overview</a></li>=20
-<li><a href=3D"#schema_name.table_name-Status">Status</a></li>=20
-<li><a href=3D"#schema_name.table_name-Granularity">Granularity</a></li>=20
-<li><a href=3D"#schema_name.table_name-Indexes">Indexes</a></li>=20
-<li><a href=3D"#schema_name.table_name-UpdateMethod">Update Method</a></li>=
-=20
-<li><a href=3D"#schema_name.table_name-Data">Data</a></li>=20
-<li><a href=3D"#schema_name.table_name-DFD">DFD</a></li>=20
-<li><a href=3D"#schema_name.table_name-ERD">ERD</a></li>=20
-<li><a href=3D"#schema_name.table_name-TableStructure">Table Structure</a><=
-/li>=20
-<li><a href=3D"#schema_name.table_name-<Materialized>ViewStructure">&lt;Mat=
-erialized&gt; View Structure</a></li>=20
-<li><a href=3D"#schema_name.table_name-SQL">SQL</a></li>=20
-<li><a href=3D"#schema_name.table_name-Stakeholders">Stakeholders</a></li>=
-=20
-<li><a href=3D"#schema_name.table_name-Createdby">Created by</a></li>=20
-</ul>=20
-</div>
-<h1 id=3D"schema_name.table_name-Overview">Overview</h1>
-<p>&lt;This is a template for a new table within Glinda created from other =
-tables within Glinda.</p>
-<p>The title of this page should be schema_name.table_name unless it is a d=
-atamarts table where the title should be the table_name.</p>
-<p>The first sentence of this section should be a succinct description of t=
-he table which is used as the DDL table description<span style=3D"color: rg=
-b(64,50,148);">.</span> The rest of the section can be in any form or forma=
-t desired&gt;&nbsp;</p>
+        <p><span style=3D"color: rgb(151,160,175);">This is a DEP template =
+for importing tables to Glinda from an external source. </span></p>
+<p><span style=3D"color: rgb(151,160,175);">The title of this page should b=
+e named simply =E2=80=9Csys_schema=E2=80=9D, =E2=80=9Csys_schema.table_name=
+=E2=80=9D or =E2=80=9Csys_schema other text=E2=80=9D</span><strong><span st=
+yle=3D"color: rgb(151,160,175);"> </span></strong><span style=3D"color: rgb=
+(151,160,175);">ensuring that sys_schema is first, followed by, if anything=
+, a full stop or space.</span></p>
+<p><span style=3D"color: rgb(151,160,175);">This page should be a child pag=
+e of the name of the system being pulled from. For example, for the ento sy=
+stem this page should sit below the Ento parent page: </span><em><span styl=
+e=3D"color: rgb(151,160,175);">Systems </span></em><span style=3D"color: rg=
+b(151,160,175);">&gt; </span><em><span style=3D"color: rgb(151,160,175);">E=
+nto </span></em><span style=3D"color: rgb(151,160,175);">&gt; </span><em><s=
+pan style=3D"color: rgb(151,160,175);">sys_ento</span></em></p>
+<p></p>
+<h1 id=3D"ImportTemplate-Overview">Overview</h1>
+<p><span style=3D"color: rgb(151,160,175);">{The first sentence of this sec=
+tion should be a succinct description of the schema which is used in the DD=
+L schema description. The rest of the section can be in any form or format =
+desired}&nbsp;</span></p>
 <p><strong>Problem Statement:</strong></p>
-<p>Working in &lt;subject area (e.g. Loss Prevention)&gt; I want to &lt;bus=
-iness use case&gt;.</p>
-<h1 id=3D"schema_name.table_name-Status">Status</h1>
-<p>&lt;Most recent GID at the top&gt;</p>
-<p> <span class=3D"confluence-jim-macro jira-issue" data-jira-key=3D"GID-30=
-69" data-client-id=3D"SINGLE_ad563582-58af-3d5e-8140-f58d62e02d51_166985783=
-_639fe141fa5fbde2ba425ea0"> <a href=3D"https://jira.mecca.com.au/browse/GID=
--3069" class=3D"jira-issue-key"><span class=3D"aui-icon aui-icon-wait issue=
--placeholder"></span>GID-3069</a> - <span class=3D"summary">Getting issue d=
-etails...</span> <span class=3D"aui-lozenge aui-lozenge-subtle aui-lozenge-=
-default issue-placeholder">STATUS</span> </span> </p>
-<h1 id=3D"schema_name.table_name-Granularity">Granularity</h1>
+<p>Working in <span style=3D"color: rgb(151,160,175);">{subject area (e.g. =
+Loss Prevention)}</span> I want to <span style=3D"color: rgb(151,160,175);"=
+>{business use case}</span>.</p>
+<h1 id=3D"ImportTemplate-Status">Status</h1>
+<p><span style=3D"color: rgb(151,160,175);">Most recent GID at the top</spa=
+n></p>
+<p> <span class=3D"confluence-jim-macro jira-issue resolved" data-jira-key=
+=3D"GID-3069"> <a href=3D"https://jira.mecca.com.au/browse/GID-3069" class=
+=3D"jira-issue-key"><img class=3D"icon" src=3D"https://jira.mecca.com.au/se=
+cure/viewavatar?size=3Dxsmall&amp;avatarId=3D10418&amp;avatarType=3Dissuety=
+pe">GID-3069</a> - <span class=3D"summary">Enable Staff Sales Table in Glin=
+da</span> <span class=3D"aui-lozenge aui-lozenge-subtle aui-lozenge-success=
+ jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+<h1 id=3D"ImportTemplate-DFD">DFD</h1><span class=3D"confluence-embedded-fi=
+le-wrapper confluence-embedded-manual-size"><img class=3D"confluence-embedd=
+ed-image confluence-external-resource" height=3D"98" width=3D"468" src=3D"6=
+2a339c86d0744b7534b9d7b5647e77c" data-image-src=3D"/wiki/download/attachmen=
+ts/190316560/Untitled%20Diagram-1684885808035.drawio.png?api=3Dv2" loading=
+=3D"lazy"></span>
 <ul>
-<li><p>&lt;primary_key_column_1&gt;</p></li>
-<li><p>&lt;primary_key_column_2&gt;</p></li>
+<li><p><span style=3D"color: rgb(151,160,175);">{Brief description of DFD}<=
+/span></p></li>
 </ul>
-<h1 id=3D"schema_name.table_name-Indexes">Indexes</h1>
+<h1 id=3D"ImportTemplate-ERD">ERD</h1><span class=3D"confluence-embedded-fi=
+le-wrapper confluence-embedded-manual-size"><img class=3D"confluence-embedd=
+ed-image confluence-external-resource" height=3D"425" width=3D"320" src=3D"=
+4db142621cc6b81778a9a91f9abe40e7" data-image-src=3D"/wiki/download/attachme=
+nts/190316560/Untitled%20Diagram-1684886150206.drawio.png?api=3Dv2" loading=
+=3D"lazy"></span>
+<h1 id=3D"ImportTemplate-ImportMethod">Import Method</h1>
 <ul>
-<li><p><span style=3D"color: rgb(51,51,51);">&lt;index_1&gt;</span></p></li=
->
-<li><p><span style=3D"color: rgb(51,51,51);">&lt;index_2&gt;</span></p></li=
->
+<li><p>Schedule: <span style=3D"color: rgb(151,160,175);">{e.g. Sunday 10PM=
+}</span></p></li>
+<li><p>DAG: import_sys_<span style=3D"color: rgb(151,160,175);">{schema}</s=
+pan>.py</p></li>
 </ul>
-<h1 id=3D"schema_name.table_name-UpdateMethod">Update Method</h1>
-<ul>
-<li><p>Method: &lt;Incremental load&gt; </p></li>
-<li><p>Schedule: &lt;Sunday 10PM&gt;</p></li>
-</ul>
-<h1 id=3D"schema_name.table_name-Data">Data</h1>
-<ul>
-<li><p>&lt;Any important information about the data. &gt;</p></li>
-</ul>
-<h1 id=3D"schema_name.table_name-DFD">DFD</h1><span class=3D"confluence-emb=
-edded-file-wrapper confluence-embedded-manual-size"><img class=3D"confluenc=
-e-embedded-image confluence-external-resource" height=3D"98" width=3D"468" =
-src=3D"6bc0b218fdd58d97adc281bc433ae0d7" data-image-src=3D"/wiki/download/a=
-ttachments/166985783/Untitled%20Diagram-1684885808035.drawio.png?api=3Dv2" =
-loading=3D"lazy"></span>
-<ul>
-<li><p>&lt;Brief description of DFD. If the text =E2=80=9Cstaging table=E2=
-=80=9D is found DEP will include a staging table in the DAG.&gt;</p></li>
-</ul>
-<h1 id=3D"schema_name.table_name-ERD">ERD</h1><span class=3D"confluence-emb=
-edded-file-wrapper confluence-embedded-manual-size"><img class=3D"confluenc=
-e-embedded-image confluence-external-resource" height=3D"425" width=3D"320"=
- src=3D"e687679830debe187b7908eeea65a246" data-image-src=3D"/wiki/download/=
-attachments/166985783/Untitled%20Diagram-1684886150206.drawio.png?api=3Dv2"=
- loading=3D"lazy"></span>
-<h1 id=3D"schema_name.table_name-TableStructure">Table Structure</h1>
-<p><span class=3D"status-macro aui-lozenge aui-lozenge-success">PRIMARY KEY=
-</span></p>
-<p>&lt;Only column <em>Column Name</em> is required although <em>Data Type<=
-/em>, <em>Nullable</em> and <em>Description</em> help automate much of the =
-DDL.</p>
-<p><em>Source/Column</em> is used to create the DAG insert/upsert statement=
-.</p>
-<p>Additional columns can be added to the table.</p>
-<p>Text can be added above/below the table&gt;</p>
+<p><span style=3D"color: rgb(151,160,175);">Place each table and it=E2=80=
+=99s import method, either full or incremental load into the table.</span><=
+/p>
 <div class=3D"table-wrap">
-<table data-layout=3D"full-width" data-local-id=3D"0485f810-1cd2-4770-aa0c-=
-d09daf300dcd" class=3D"confluenceTable">
+<table data-layout=3D"default" data-local-id=3D"7b790b00-072c-46a1-8b12-51b=
+68cf497bb" class=3D"confluenceTable">
 <colgroup>
-<col style=3D"width: 259.0px;">
-<col style=3D"width: 100.0px;">
-<col style=3D"width: 104.0px;">
-<col style=3D"width: 361.0px;">
-<col style=3D"width: 309.0px;">
+<col style=3D"width: 275.0px;">
+<col style=3D"width: 140.0px;">
+<col style=3D"width: 345.0px;">
 </colgroup>
 <tbody>
 <tr>
-<th class=3D"confluenceTh"><p><strong>Column Name</strong></p></th>
-<th class=3D"confluenceTh"><p>Data Type</p></th>
-<th class=3D"confluenceTh"><p>Nullable</p></th>
-<th class=3D"confluenceTh"><p>Description</p></th>
-<th class=3D"confluenceTh"><p>Source/Column</p></th>
+<th class=3D"confluenceTh"><p><strong>Table Name</strong></p></th>
+<th class=3D"confluenceTh"><p><strong>Rows</strong></p></th>
+<th class=3D"confluenceTh"><p><strong>Import Method</strong></p></th>
 </tr>
 <tr>
-<td class=3D"confluenceTd"><p><strong>date_key</strong></p></td>
-<td class=3D"confluenceTd"><p>int4</p></td>
-<td class=3D"confluenceTd"><p>NOT NULL</p></td>
-<td class=3D"confluenceTd"><p>Unique ID for date</p></td>
-<td class=3D"confluenceTd"><p>dwh.fct_sale/</p><p>date_key</p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">tabl=
+e_name_1</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">50</=
+span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">Full=
+ load</span></p></td>
 </tr>
 <tr>
-<td class=3D"confluenceTd"><p><strong>store_key</strong></p></td>
-<td class=3D"confluenceTd"><p>int4</p></td>
-<td class=3D"confluenceTd"><p>NOT NULL</p></td>
-<td class=3D"confluenceTd"><p>Unique ID for store</p></td>
-<td class=3D"confluenceTd"><p>dwh.fct_sale/</p><p>store_key</p></td>
-</tr>
-<tr>
-<td class=3D"confluenceTd"><p><strong>item_count</strong></p></td>
-<td class=3D"confluenceTd"><p>int2</p></td>
-<td class=3D"confluenceTd"><p>NOT NULL</p></td>
-<td class=3D"confluenceTd"><p>Number of purchased items</p></td>
-<td class=3D"confluenceTd"><p>dwh.fct_sale/</p><p>quantity</p></td>
-</tr>
-<tr>
-<td class=3D"confluenceTd"><p><strong>record_created</strong></p></td>
-<td class=3D"confluenceTd"><p>timestamptz</p></td>
-<td class=3D"confluenceTd"><p>NOT NULL</p></td>
-<td class=3D"confluenceTd"><p>Date record created in table</p></td>
-<td class=3D"confluenceTd"><p><br></p></td>
-</tr>
-<tr>
-<td class=3D"confluenceTd"><p><strong>record_updated</strong></p></td>
-<td class=3D"confluenceTd"><p>timestamptz</p></td>
-<td class=3D"confluenceTd"><p>NOT NULL</p></td>
-<td class=3D"confluenceTd"><p>Date record updated in table</p></td>
-<td class=3D"confluenceTd"><p><br></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">tabl=
+e_name_2</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">100<=
+/span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">Incr=
+emental load</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<h1 id=3D"schema_name.table_name-<Materialized>ViewStructure">&lt;Materiali=
-zed&gt; View Structure</h1>
-<p>&lt;Title of this section should be either <strong>View Structure</stron=
-g> or <strong>Materialized View Structure</strong></p>
-<p>Only column <em>Column Name</em> is required although&nbsp;<em>Descripti=
-on</em>&nbsp;and <em>Source/Column&nbsp;</em>help automate much of the DDL =
-including the definition of the view</p>
-<p>* in the Source/Column is a shortcut to say the column is from the table=
- created above and has the same name</p>
-<p>Indexes after the table name (e.g. dwh.dim_store(2) ) are used to differ=
-entiate tables that are joined more than once</p>
-<p>Additional columns can be added to the table</p>
-<p>Text can be added above/below the table&gt;</p>
+<h1 id=3D"ImportTemplate-{sys_schema}.{table_name_1}"><span style=3D"color:=
+ rgb(151,160,175);">{sys_schema}.{table_name_1}</span></h1>
+<p><span style=3D"color: rgb(151,160,175);">Copy this section for each tabl=
+e.</span></p>
+<h3 id=3D"ImportTemplate-Description">Description</h3>
+<p><span style=3D"color: rgb(151,160,175);">{The first sentence is used as =
+a summary description for the table.}</span></p>
+<h3 id=3D"ImportTemplate-Granularity">Granularity</h3>
+<ul>
+<li><p><span style=3D"color: rgb(151,160,175);">{primary_key_column_1}</spa=
+n></p></li>
+</ul>
+<h3 id=3D"ImportTemplate-ForeignKeys">Foreign Keys</h3>
+<ul>
+<li><p><span style=3D"color: rgb(151,160,175);">{foreign_key_column_1}</spa=
+n></p></li>
+</ul>
+<h3 id=3D"ImportTemplate-Indexes">Indexes</h3>
+<ul>
+<li><p><span style=3D"color: rgb(151,160,175);">{index_1}</span></p></li>
+</ul>
+<h3 id=3D"ImportTemplate-TableStructure">Table Structure</h3>
 <div class=3D"table-wrap">
-<table data-layout=3D"full-width" data-local-id=3D"25f32009-c14f-4fa1-a93e-=
-dca7e0f68c92" class=3D"confluenceTable">
+<table data-layout=3D"default" data-local-id=3D"5e7e3d6b-c735-451a-8631-b8b=
+45d7d96fd" class=3D"confluenceTable">
 <colgroup>
-<col style=3D"width: 231.0px;">
-<col style=3D"width: 608.0px;">
-<col style=3D"width: 294.0px;">
+<col style=3D"width: 152.0px;">
+<col style=3D"width: 152.0px;">
+<col style=3D"width: 152.0px;">
+<col style=3D"width: 152.0px;">
+<col style=3D"width: 152.0px;">
 </colgroup>
 <tbody>
 <tr>
-<th class=3D"confluenceTh"><p><strong>Column Name</strong></p></th>
-<th class=3D"confluenceTh"><p>Description</p></th>
-<th class=3D"confluenceTh"><p>Source/Column</p></th>
+<td class=3D"confluenceTd"><p><strong>Column Name</strong></p></td>
+<td class=3D"confluenceTd"><p><strong>Data Type</strong></p></td>
+<td class=3D"confluenceTd"><p><strong>Nullable</strong></p></td>
+<td class=3D"confluenceTd"><p><strong>Description</strong></p></td>
+<td class=3D"confluenceTd"><p><strong>Source/Column</strong></p></td>
 </tr>
 <tr>
-<td class=3D"confluenceTd"><p><strong>date_key</strong></p></td>
-<td class=3D"confluenceTd"><p>Unique ID for date</p></td>
-<td class=3D"confluenceTd"><p>*</p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">orde=
+r_item_id</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">uuid=
+</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">NOT =
+NULL</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">&nbs=
+p;</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">dbo.=
+orderitems/orderitemid</span></p></td>
 </tr>
 <tr>
-<td class=3D"confluenceTd"><p><strong>store_code</strong></p></td>
-<td class=3D"confluenceTd"><p><span style=3D"color: rgb(9,30,66);">Code of =
-store of&nbsp;purchase</span></p></td>
-<td class=3D"confluenceTd"><p>dwh.dim_store/</p><p>store_code</p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">reco=
+rd_created</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">time=
+stamptz</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">NOT =
+NULL</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">&nbs=
+p;</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">&nbs=
+p;</span></p></td>
 </tr>
 <tr>
-<td class=3D"confluenceTd"><p><strong>primary_store_name</strong></p></td>
-<td class=3D"confluenceTd"><p>Primary store name of employment of employee =
-customer</p></td>
-<td class=3D"confluenceTd"><p>dwh.dim_store(2)/</p><p>store_name</p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">reco=
+rd_updated</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">time=
+stamptz</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">NOT =
+NULL</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">&nbs=
+p;</span></p></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(151,160,175);">&nbs=
+p;</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<h1 id=3D"schema_name.table_name-SQL">SQL</h1>
+<h1 id=3D"ImportTemplate-SQL">SQL</h1>
+<p><span style=3D"color: rgb(151,160,175);">Example table DDL or insert sta=
+tement as appropriate</span></p>
 <div class=3D"code panel pdl" style=3D"border-width: 1px;">
 <div class=3D"codeContent panelContent pdl">=20
 <pre class=3D"syntaxhighlighter-pre" data-syntaxhighlighter-params=3D"brush=
-: sql; gutter: false; theme: Confluence" data-theme=3D"Confluence">&lt;Tabl=
-e DDL or insert statement as appropriate&gt;</pre>=20
+: sql; gutter: false; theme: Confluence" data-theme=3D"Confluence"></pre>=
+=20
 </div>
 </div>
-<h1 id=3D"schema_name.table_name-Stakeholders">Stakeholders</h1>
+<h1 id=3D"ImportTemplate-Stakeholders">Stakeholders</h1>
 <ul>
-<li><p>&lt;Firstname Lastname&gt; (&lt;email&gt;)</p></li>
+<li><p><span style=3D"color: rgb(151,160,175);">{Firstname Lastname} ({emai=
+l})</span></p></li>
 </ul>
-<h1 id=3D"schema_name.table_name-Createdby">Created by</h1>
+<h1 id=3D"ImportTemplate-Createdby">Created by</h1>
 <ul>
-<li><p>&lt;Firstname Lastname&gt; (&lt;email&gt;)</p></li>
+<li><p><span style=3D"color: rgb(151,160,175);">{Firstname Lastname} ({emai=
+l})</span></p></li>
 </ul>
+<p></p>
     </div>
 </body>
 </html>
-------=_Part_6_1545922282.1685670032420
+------=_Part_28_655327811.1686293070735
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: base64
-Content-Location: file:///C:/6bc0b218fdd58d97adc281bc433ae0d7
+Content-Location: file:///C:/62a339c86d0744b7534b9d7b5647e77c
 
 iVBORw0KGgoAAAANSUhEUgAAAp8AAACNCAYAAADxaRGxAAAAAXNSR0IArs4c6QAAIABJREFUeF7t
 nQl4FdXZx18WIahIAphE9pQim0VAFBTwU0RAKItikUUsFo1AbChbkFXZggEB4SMU44YiSFUqS0VR
@@ -689,10 +669,10 @@ KJxlO2mXVd7169dTTo71fLYqJxbft5x8sdhp9Mk9BB6e8+5j7mmNN1uycNRtlgx3vNHHMo03ex+5
 Vjft9oolwymrUy3TRK7F3qzp0Z45lgzfvLuXZRpv9j5yrb7jtVWWDFNTMZ+djkhOjvV8dlqHF/ND
 Pr04amgzCIAACIAACIAACHiUAOTTowOHZoMACIAACIAACICAFwn8PxwSs2RqHxagAAAAAElFTkSu
 QmCC
-------=_Part_6_1545922282.1685670032420
+------=_Part_28_655327811.1686293070735
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: base64
-Content-Location: file:///C:/e687679830debe187b7908eeea65a246
+Content-Location: file:///C:/4db142621cc6b81778a9a91f9abe40e7
 
 iVBORw0KGgoAAAANSUhEUgAAAUAAAAGpCAYAAAD82+/gAAAAAXNSR0IArs4c6QAAIABJREFUeF7t
 nX2MHsWd53+PPcYvEOy1IeBNOCDxOMswcUAQxRlLITndZfFE0c4qWmd32ezkkuyMEKvMRFr/c7LO
@@ -1049,4 +1029,4 @@ gBpOanAQALDBlYuiJXsAAEz2UZNDAIBNrl2ULdEDAGCiixodAABsdPWicEkeAACTPNTs7wHAZtcv
 SpfgAQCw3U0EAGx3/be+9HEAbL1zWuSAKOEKbINpUSNoY1EBwDbWerjMACDaQSs9oAJgKx2BQis9
 gB4gGkajPQAANrp6cxcOAMztQiRgswcAQJtrp3rbAMDq6wAWwAPwQIUe+P/ccUCVEhYOjwAAAABJ
 RU5ErkJggg==
-------=_Part_6_1545922282.1685670032420--
+------=_Part_28_655327811.1686293070735--
