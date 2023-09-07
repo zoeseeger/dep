@@ -32,8 +32,11 @@ class DdlInput:
         """Determine input for DDL."""
 
         # new schema lines
-        if self.table_structures[0].schema == "tmp":
-            self.newSchema(self.table_structures[1].schema)
+        if self.action == "import":
+            for table in self.table_structures:
+                if table.schema != "tmp":
+                    self.newSchema(table.schema)
+                    break
 
         # main table: definition > indexes > comments > permissions
         # tmp & staging: definition > permissions
@@ -147,9 +150,19 @@ class DdlInput:
         if not self.table.indexes: return
 
         # remove indexes that are primary keys
+        i = 1
         for index in self.table.indexes:
             if not index in self.table.primary_keys:
-                self.lines.append(f"CREATE INDEX {self.table.table_name}_{index}_ix ON {self.table.schema}.{self.table.table_name} USING btree ({index});")
+                if ',' in index:
+                    if index.count(',') < 2:
+                        # include col names
+                        col_names = index.replace(' ', '').replace(',', '_')
+                    else:
+                        col_names = "composite" + str(i)
+                        i += 1
+                    self.lines.append(f"CREATE INDEX {self.table.table_name}_{col_names}_ix ON {self.table.schema}.{self.table.table_name} USING btree ({index});")
+                else:
+                    self.lines.append(f"CREATE INDEX {self.table.table_name}_{index}_ix ON {self.table.schema}.{self.table.table_name} USING btree ({index});")
         self.lines.append("")
 
     def tableDescription(self):
@@ -254,9 +267,9 @@ class DdlInput:
                     f"    {table_name} {alias} ON {alias}.xxx = {first_alias}.xxx",
                 ])
 
-        self.lines.append("")
+        self.lines.append(";")
 
-        self.drop.append(f"-- DROP {text}VIEW IF EXISTS {self.view.schema}.{self.view.view_name}")
+        self.drop.append(f"-- DROP {text}VIEW IF EXISTS {self.view.schema}.{self.view.view_name};")
 
     def addColumnsView(self):
         """Add columns to view."""
