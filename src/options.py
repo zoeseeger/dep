@@ -6,7 +6,7 @@ import copy
 import shutil
 from collections import OrderedDict
 
-from src.functions import makeOutputDirectory, findFirstFile, doc2Html, readHtmlAndHeatSoup, getUnderHeaderHtml, getTableUnderHeaderHtml
+from src.functions import makeOutputDirectory, findFirstFile, doc2Html, doc2HtmlWin, readHtmlAndHeatSoupWin, readHtmlAndHeatSoup, getUnderHeaderHtml, getTableUnderHeaderHtml
 from src.table import Table, View
 
 
@@ -60,13 +60,20 @@ class Options:
 
         # convert to html
         if self.confluence_doc:
-            self.temp_file = doc2Html(self.confluence_doc, self.debug)
-            self.soup = readHtmlAndHeatSoup(self.temp_file)
+            self.temp_file = doc2HtmlWin(self.confluence_doc, self.debug)
+            self.soup = readHtmlAndHeatSoupWin(self.temp_file)
             if not self.debug:
                 os.remove(self.temp_file)
                 tmp_folder = self.temp_file.replace('.html', '_files')
                 if os.path.exists(tmp_folder):
                     shutil.rmtree(tmp_folder)
+
+        # convert to html
+        # if self.confluence_doc:
+        #     self.temp_file = doc2Html(self.confluence_doc, self.debug)
+        #     self.soup = readHtmlAndHeatSoup(self.temp_file)
+            # from bs4 import BeautifulSoup
+            # self.soup = BeautifulSoup(html, "html.parser")
 
     def parseHtml(self):
         """Get vars from HTML."""
@@ -95,7 +102,7 @@ class Options:
         # table structures and top level vars
         for head in headers:
 
-            head_text = head.text.lower().strip()
+            head_text = head.text.lower().replace('\n', ' ').replace('  ', ' ').strip()
 
             ### new_table/import
             if head_text == "overview":
@@ -106,7 +113,7 @@ class Options:
                     self.description = overview.split('. ')[0]
 
                 try:
-                    p = re.compile("Working in (.*) I want to")
+                    p = re.compile("Working in (.*) I want")
                     self.subject_area = p.search(overview).group(1).strip().title()
                 except AttributeError:
                     pass
@@ -115,8 +122,12 @@ class Options:
                 self.jira_id = getUnderHeaderHtml(head)[0].split()[0]
 
             elif head_text == "created by":
-                creator = getUnderHeaderHtml(head)[0].replace(')', '')
-                self.user, self.user_email = creator.split(' (')
+                try:
+                    creator = getUnderHeaderHtml(head)[0].replace(')', '')
+                    self.user, self.user_email = creator.split(' (')
+                    self.user = self.user.lower().replace(' ','')
+                except IndexError:
+                    pass
 
             ### new_table
             elif self.action == "new_table":
@@ -159,6 +170,7 @@ class Options:
                     for line in getUnderHeaderHtml(head):
                         if 'Schedule' in line:
                             self.schedule = line.replace('Schedule', '').replace(':', '').strip()
+                            break
 
                 # table header
                 elif f"{schema}." in head_text:
@@ -170,7 +182,7 @@ class Options:
                     # for each sibling
                     for sib in head.find_next_siblings():
 
-                        sib_text = sib.text.lower().strip()
+                        sib_text = sib.text.lower().replace('\n', ' ').replace('  ', ' ').strip()
 
                         if sib_text == "description":
                             table_description = ' '.join(getUnderHeaderHtml(sib)).split('. ')[0]
@@ -180,6 +192,9 @@ class Options:
 
                         elif sib_text == "granularity":
                             self.table_structures[-1].updateAttribute("primary_keys", getUnderHeaderHtml(sib))
+
+                        elif sib_text == "business key":
+                            self.table_structures[-1].updateAttribute("business_keys", getUnderHeaderHtml(sib))
 
                         if sib_text == "indexes":
                             self.table_structures[-1].updateAttribute("indexes", getUnderHeaderHtml(sib))
@@ -198,7 +213,7 @@ class Options:
         # primary keys and indexes - need tables initiated
         for head in headers:
 
-            head_text = head.text.lower().strip()
+            head_text = head.text.lower().replace('\n', ' ').replace('  ', ' ').strip()
 
             if self.action == "new_table":
 
@@ -229,7 +244,7 @@ class Options:
         for i, header in enumerate(header):
             if "method" in header.lower().strip():
                 import_pos = i
-            elif "name" in header.lower().strip():
+            elif "table name" in header.lower().strip():
                 name_pos = i
 
         if name_pos is None:
@@ -335,6 +350,7 @@ class Options:
                         primary_keys = table.get("primary_keys", []),
                         foreign_keys = table.get("foreign_keys", []),
                         table_description = table.get("table_description"),
+                        business_keys = table.get("business_keys"),
                     ))
                 except Exception as e:
                     sys.exit(f"Table field missing from input file. exiting . . .\n{e}")
@@ -390,6 +406,10 @@ class Options:
 
         new_tables = []
         for table in self.table_structures:
+
+            if "fivetran" in table.import_method:
+                new_tables.append(table)
+                continue
 
             tmp_table = copy.deepcopy(table)
             main_table = copy.deepcopy(table)

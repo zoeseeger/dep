@@ -1,6 +1,7 @@
 import os
 import glob
 import win32com.client
+# import mammoth
 from bs4 import BeautifulSoup
 
 
@@ -31,8 +32,8 @@ def findFirstFile(pattern:str):
         return None
 
 
-def doc2Html(filename:str, debug:bool):
-    """Convert exported doc file to HTML."""
+def doc2HtmlWin(filename:str, debug:bool):
+    """Convert exported doc file to HTML with win32com.client."""
 
     tempfile = filename.replace('.doc', '_temp.html')
 
@@ -45,11 +46,36 @@ def doc2Html(filename:str, debug:bool):
     doc.Close()
     return tempfile
 
+def readHtmlAndHeatSoupWin(html_file:str):
+    """Read HTML file and return BeautifulSoup object."""
+
+    with open(html_file, "r", encoding="UTF-16") as file:
+        html = file.read()
+    return BeautifulSoup(html, "html.parser")
+
+
+def doc2Html(filename:str, debug:bool):
+    """Convert exported doc file to HTML with win32com.client."""
+
+    tempfile = filename.replace('.doc', '_temp.html')
+
+    filename = "sys_ukg.docx"
+    tempfile = filename.replace('.docx', '_temp.html')
+
+    with open(filename, "rb") as doc_file:
+        result = mammoth.convert_to_html(doc_file)
+        # return result
+        # print(result.value)
+        with open(tempfile, "w") as html_file:
+            html_file.write(result.value)
+    return tempfile
+    # return result
+
 
 def readHtmlAndHeatSoup(html_file:str):
     """Read HTML file and return BeautifulSoup object."""
 
-    with open(html_file, "r", encoding="UTF-16") as file:
+    with open(html_file, "r", encoding="ANSI") as file:
         html = file.read()
     return BeautifulSoup(html, "html.parser")
 
@@ -68,7 +94,7 @@ def getUnderHeaderHtml(heading):
 
         # add item
         else:
-            list_.extend(sib.text.replace('\u00a0', ' ').replace('·', ' ').strip().split('\n'))
+            list_.extend(htmlToText(sib.text).split('\n'))
 
     return list(filter(None, list_))
 
@@ -97,9 +123,14 @@ def getTableUnderHeaderHtml(heading):
 
             # rest of rows
             for row in rows[1:]:
-                list_.append([el.text.strip().replace('\n', '').replace('  ', ' ').replace('\u00a0', ' ') for el in row.find_all('td')])
+                list_.append([htmlToText(el.text).replace('\n', '').replace('  ', ' ') for el in row.find_all('td')])
 
     return row_header, list_
+
+def htmlToText(text):
+    """Convert to straight text."""
+
+    return text.replace('\u00a0', ' ').replace('\u2013', '-').replace('\u201C', '"').replace('\u201D', '"').replace('·', ' ').strip()
 
 def makeOutputDirectory(output_dir):
     """If not exists, make directory."""

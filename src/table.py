@@ -9,7 +9,7 @@ class Table:
         self,
         schema:str,
         table_name:str,
-        import_method:str="incremental", # full & soft delete OR incremental & upsert
+        import_method:str="incremental", # full & soft delete // incremental & upsert // fivetran legacy
         columns:list=None,
         types:list=None,
         nullables:list=None,
@@ -19,6 +19,7 @@ class Table:
         sources:dict=None,
         indexes:list=None,
         primary_keys:list=None,
+        business_keys:list=None, # used for psa
         foreign_keys:list=None,
         table_description:str="xxx table description",
         base_schema_table:str=None,
@@ -47,6 +48,7 @@ class Table:
         self.sources = sources or OrderedDict()
         self.indexes = indexes or []
         self.primary_keys = primary_keys or []
+        self.business_keys = business_keys or []
         self.foreign_keys = foreign_keys or []
 
     def updateAttribute(self, property, value):
@@ -101,22 +103,25 @@ class Table:
         for i in range(len(structure)):
 
             # print(class_obj.table_name, structure[i][name_pos])
-            class_obj.columns.append(structure[i][name_pos])
+            class_obj.columns.append(structure[i][name_pos].lower())
 
             if not view:
 
                 if type_pos is not None:
-                    class_obj.types.append(structure[i][type_pos])
+                    class_obj.types.append(structure[i][type_pos].lower())
                 else:
                     class_obj.types.append("")
 
                 if null_pos is not None:
-                    class_obj.nullables.append(structure[i][null_pos])
+                    class_obj.nullables.append(structure[i][null_pos].upper())
                 else:
                     class_obj.nullables.append("")
 
             if desc_pos is not None:
-                class_obj.descriptions.append(structure[i][desc_pos])
+                descr = structure[i][desc_pos]
+                if descr.endswith('.'):
+                    descr = descr[:-1]
+                class_obj.descriptions.append(descr)
             else:
                 class_obj.descriptions.append("")
 

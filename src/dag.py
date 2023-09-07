@@ -62,7 +62,7 @@ class DagInput:
                 # main
                 else:
                     self.addTaskAsFunction(
-                        "upsert", f"Upsert from stg -> {schema}.{table_name}."
+                        "upsert", f"Upsert from stg -> {schema}.{table_name}.", dependent_task=True
                     )
                     self.glindaHook()
                     self.upsertSQL(where=False)
@@ -100,7 +100,7 @@ class DagInput:
                 # main
                 else:
                     self.addTaskAsFunction(
-                        "upsert_to_sys", f"Upsert from tmp -> {schema}.{table_name}."
+                        "upsert_to_sys", f"Upsert from tmp -> {schema}.{table_name}.", dependent_task=True
                     )
                     self.glindaHook()
                     self.upsertSQL(where=False)
@@ -123,12 +123,24 @@ class DagInput:
                 else:
                     self.addTaskAsFunction(
                         "upsert_to_sys",
-                        f"Upsert from tmp -> {schema}.{table_name} with soft delete.",
+                        f"Upsert from tmp -> {schema}.{table_name} with soft delete.", dependent_task=True
                     )
                     self.glindaHook()
                     self.upsertSQL(where=False)
                     self.softDeleteSQL()
                     self.runQueryCommand()
+
+            # import from landing table to sys - assuming incremental update - no staging
+            elif action == "import" and method == "fivetran legacy":
+
+                self.addTaskAsFunction(
+                    "insert_to_psa", f"Insert from landing -> {schema}.{table_name}."
+                )
+                self.glindaHook()
+                self.getIncrementFromSQL()
+                self.insertToPersistantStaging() ###
+                self.updateIncrementFromSQL()
+                self.runQueryCommand()
 
             else:
                 sys.exit(
@@ -150,7 +162,7 @@ class DagInput:
         self.addTasksOfDAG()
         writeLinesFile(self.output_dir, self.dag_file, self.lines)
 
-    def addTaskAsFunction(self, typ, description, table=True):
+    def addTaskAsFunction(self, typ, description, dependent_task=False, table=True):
         """New task as python function in DAG."""
 
         if table:
@@ -168,7 +180,10 @@ class DagInput:
         )
 
         # add to list of tasks
-        self.tasks.append(f"{typ}_{name}")
+        if dependent_task:
+            self.tasks[-1].append(f"{typ}_{name}")
+        else:
+            self.tasks.append([f"{typ}_{name}"])
 
     def glindaHook(self):
         """Add glinda hook."""
@@ -192,15 +207,17 @@ class DagInput:
 
         self.lines.extend(
             [
-                f'    increment_from, increment_to = glinda_hook.get_first("""',
+                f'    increment_from, increment_to = glinda_hook.get_first(',
+                f'        """',
                 f"        SELECT",
-                f"            (increment_from::{date_type}-overlap::interval)::text",
+                f"            increment_from::{date_type}-overlap::interval",
                 f"            , now()::{date_type}",
                 f"        FROM",
                 f"            adm.table_parameters",
                 f"        WHERE",
                 f"            table_name = '{name}';",
-                f'    """)',
+                f'        """',
+                f'    )',
                 f"",
             ]
         )
@@ -247,6 +264,7 @@ class DagInput:
         # main source
         src_table = "xxx_table"
         src_alias = "xxx"
+        first_alias = "xxx"
         for _, dict_ in self.table.sources.items():
             src_table = dict_["source_table"]
             src_alias = dict_["alias"]
@@ -283,30 +301,11 @@ class DagInput:
                 ]
             )
 
-    def insertSQL(self, where):
-        """Insert SQL query."""
-
-        self.lines.extend(
-            [
-                f'    sql_insert_{self.table.schema} = f"""',
-                f"        INSERT INTO {self.table.schema}.{self.table.table_name} AS {self.table.schema} (",
-            ]
-        )
-
-        self.addColumns("insert_into")
-
-        self.lines.extend(
-            [
-                f"        )",
-                f"        SELECT",
-            ]
-        )
-
-        self.addColumns("select_from_source")
+    def fromSources(self):
+        """From sources with joins."""
 
         self.lines.append("        FROM")
 
-        # from
         if not self.table.sources:
             first_alias = "xxx"
             self.lines.extend(
@@ -329,6 +328,31 @@ class DagInput:
                             f"            {dict_['source_table']} {dict_['alias']} ON {dict_['alias']}.xxx = {first_alias}.xxx",
                         ]
                     )
+
+        return first_alias
+
+    def insertSQL(self, where):
+        """Insert SQL query."""
+
+        self.lines.extend(
+            [
+                f'    sql_insert_{self.table.schema} = f"""',
+                f"        INSERT INTO {self.table.schema}.{self.table.table_name} AS {self.table.schema} (",
+            ]
+        )
+
+        self.addColumns("insert_into")
+
+        self.lines.extend(
+            [
+                f"        )",
+                f"        SELECT",
+            ]
+        )
+
+        self.addColumns("select_from_source")
+
+        first_alias = self.fromSources()
 
         # where
         if where:
@@ -369,29 +393,7 @@ class DagInput:
 
         self.lines.append("        FROM")
 
-        # from
-        if not self.table.sources:
-            first_alias = "xxx"
-            self.lines.extend(
-                [
-                    f"            xxx_schema.xxx_table xxx",
-                    f"",
-                ]
-            )
-        else:
-            for i, (table, dict_) in enumerate(self.table.sources.items()):
-                if i == 0:
-                    self.lines.append(
-                        f"            {dict_['source_table']} {dict_['alias']}"
-                    )
-                    first_alias = dict_["alias"]
-                else:
-                    self.lines.extend(
-                        [
-                            f"        LEFT JOIN",
-                            f"            {dict_['source_table']} {dict_['alias']} ON {dict_['alias']}.xxx = {first_alias}.xxx",
-                        ]
-                    )
+        first_alias = self.fromSources()
 
         # where
         if where:
@@ -437,7 +439,7 @@ class DagInput:
         self.lines.extend(
             [
                 f'    sql_delete_{self.table.schema} = f"""',
-                f"        UPDATE ",
+                f"        UPDATE",
                 f"            {self.table.schema}.{self.table.table_name} AS {self.table.schema}_n",
                 f"        SET",
                 f"            record_deleted = now()",
@@ -495,6 +497,137 @@ class DagInput:
         # add to list of sql queries
         self.queries.append(f"sql_delete_{self.table.schema}")
 
+    def insertToPersistantStaging(self):
+        """Insert SQL query of landing area to persistant staging area."""
+
+        self.lines.extend(
+            [
+                f'    sql_insert_{self.table.schema} = f"""',
+                f"        INSERT INTO {self.table.schema}.{self.table.table_name} AS {self.table.schema} (",
+            ]
+        )
+
+        self.addColumns("psa_insert_into")
+
+        self.lines.extend(
+            [
+                f"        )",
+                f"        -- inserted and updated",
+                f"        WITH insert_update AS (",
+                f"            SELECT",
+            ]
+        )
+
+        self.addColumns("psa_cte", tabs=4)
+
+        self.lines.extend(
+            [
+                f"                , a._fivetran_deleted",
+                f"            FROM",
+                f"                {next(iter(self.table.sources.values()))['source_table']} a",
+                f"            WHERE",
+                f"                _fivetran_deleted = FALSE",
+                f"                AND _fivetran_synced >= '{{increment_from}}'::timestamptz",
+                f"                AND _fivetran_synced < '{{increment_to}}'::timestamptz",
+                f"        ),",
+                f"        -- replaced or deleted rows",
+                f"        replaced_deleted AS (",
+                f"            SELECT",
+            ]
+        )
+
+        self.addColumns("psa_cte", tabs=4)
+
+        self.lines.extend(
+            [
+                f"                , _fivetran_deleted",
+                f"            FROM",
+                f"                {next(iter(self.table.sources.values()))['source_table']} a",
+                f"            WHERE",
+                f"                _fivetran_deleted = TRUE",
+                f"                AND _fivetran_synced >= '{{increment_from}}'::timestamptz",
+                f"                AND _fivetran_synced < '{{increment_to}}'::timestamptz",
+                f"        ),",
+                f"        -- only deleted",
+                f"        deleted AS (",
+                f"            SELECT",
+            ]
+        )
+
+        self.addColumns("psa_cte", tabs=4)
+
+        self.lines.extend(
+            [
+                f"                , a._fivetran_deleted",
+                f"            FROM",
+                f"                replaced_deleted a",
+                f"            LEFT JOIN",
+            ]
+        )
+
+        first_col = "xxx"
+
+        if self.table.business_keys:
+            for i, col in enumerate(self.table.business_keys):
+
+                # business key may be renamed in dest, find source name
+                column_name = col
+                for val, dest_col in enumerate(self.table.columns):
+                    if dest_col == col:
+                        if self.table.source_columns[val]:
+                            column_name = self.table.source_columns[val]
+                        break
+
+                if i < 1:
+                    first_col = column_name
+                    self.lines.append(
+                        f"                insert_update b ON b.{column_name} = a.{column_name}"
+                    )
+                else:
+                    self.lines.append(
+                        f"                    AND b.{column_name} = a.{column_name}"
+                    )
+        else:
+            self.lines.append(
+                f"                updated_deleted b ON b.xxx = a.xxx"
+            )
+
+        self.lines.extend(
+            [
+                f"            WHERE",
+                f"                b.{first_col} IS NULL",
+                f"        )",
+                f"        -- inserted and updated",
+                f"        SELECT",
+            ]
+        )
+
+        self.addColumns("psa_select")
+
+        self.lines.extend(
+            [
+                f"        FROM",
+                f"            insert_update",
+                f"        UNION ALL",
+                f"        -- deleted",
+                f"        SELECT",
+            ]
+        )
+
+        self.addColumns("psa_select")
+
+        self.lines.extend(
+            [
+                f"        FROM",
+                f"            deleted;",
+                f'    """',
+                f"",
+            ]
+        )
+
+        # add to list of sql queries
+        self.queries.append(f"sql_insert_{self.table.schema}")
+
     def incrementFrom2AsIncrementFromSQL(self):
         """SQL query to update table parameters."""
 
@@ -521,11 +654,11 @@ class DagInput:
         self.lines.extend(
             [
                 f'    sql_update_increment_from = f"""',
-                f"        UPDATE ",
+                f"        UPDATE",
                 f"            adm.table_parameters",
-                f"        SET ",
+                f"        SET",
                 f"            increment_from = '{{increment_to}}'",
-                f"        WHERE ",
+                f"        WHERE",
                 f"            table_name = '{self.table.schema}.{self.table.table_name}';",
                 f'    """',
                 f"",
@@ -553,10 +686,11 @@ class DagInput:
         source_columns = self.table.source_columns
         aliases = self.table.source_alias
 
-        skip_columns = ["record_created", "record_updated", "record_deleted"]
+        skip_columns = ["record_created", "record_updated", "record_deleted", "load_datetime"]
 
+        # check column placement
         i = 0
-        for column in columns:
+        for j, column in enumerate(columns):
 
             if i > 0:
                 space = " " * 4 * tabs + ", "
@@ -577,13 +711,13 @@ class DagInput:
                     continue
 
                 # get alias
-                alias = aliases[i]
+                alias = aliases[j]
 
                 # use different column name
-                if (source_columns and source_columns[i]) and source_columns[
-                    i
-                ] != columns[i]:
-                    self.lines.append(f"{space}{alias}.{source_columns[i]} AS {column}")
+                if (source_columns and source_columns[j]) and source_columns[
+                    j
+                ] != columns[j]:
+                    self.lines.append(f"{space}{alias}.{source_columns[j]} AS {column}")
                 else:
                     self.lines.append(f"{space}{alias}.{column}")
 
@@ -620,6 +754,61 @@ class DagInput:
 
                 space = space.replace(", ", "")
                 self.lines.append(f"{space}AND tmp.{column} IS NULL")
+
+            elif typ == "psa_insert_into":
+
+                self.lines.append(f"{space}{column}")
+
+            elif typ == "psa_cte":
+
+                # skip columns or surrogate key
+                if column in skip_columns or column.startswith('sur_'):
+                    continue
+
+                # use different column name
+                # self.lines.append(f"column={column}, j={j}, columns[j]={columns[j]}, source_columns[i]={source_columns[i]}")
+                if (source_columns and source_columns[j]) and source_columns[j] != columns[j]:
+                    self.lines.append(f"{space}a.{source_columns[j]}")
+                else:
+                    self.lines.append(f"{space}a.{column}")
+
+
+            elif typ == "psa_select":
+
+                # surrogate key
+                if column.startswith('sur_'):
+
+                    # business key may be renamed in dest, find source name
+                    business_keys_source = []
+                    if self.table.business_keys:
+                        for i, col in enumerate(self.table.business_keys):
+                            column_name = col
+                            for val, dest_col in enumerate(self.table.columns):
+                                if dest_col == col:
+                                    if self.table.source_columns[val]:
+                                        column_name = self.table.source_columns[val]
+                                    break
+
+                            business_keys_source.append(column_name)
+
+                        # id::text || now()::text
+                        business_concat = ' || '.join([f'{x}::text' for x in business_keys_source]) + f' || now()::text'
+                    else:
+                        business_concat = "xxx"
+
+                    self.lines.append(f"{space}encode(sha256(CAST({business_concat} AS bytea)), 'hex') AS {column}")
+                elif column == "load_datetime":
+                    self.lines.append(f"{space}now() AS load_datetime")
+                elif column == "record_deleted":
+                    self.lines.append(f"{space}_fivetran_deleted AS record_deleted")
+                else:
+                    # use different column name
+                    if (source_columns and source_columns[j]) and source_columns[
+                        j
+                    ] != columns[j]:
+                        self.lines.append(f"{space}{source_columns[j]} AS {column}")
+                    else:
+                        self.lines.append(f"{space}{column}")
 
             i += 1
 
@@ -660,7 +849,7 @@ class DagInput:
         elif schema == "datamarts":
             pool = "dtm"
         else:
-            pool = "xxx"
+            pool = "default_pool"
 
         # dag id & description
         if self.action == "new_table":
@@ -672,7 +861,7 @@ class DagInput:
             descr = f"Import tables into {schema}."
 
         # date
-        n = datetime.datetime.today()
+        n = datetime.datetime.utcnow()
 
         self.lines.extend(
             [
@@ -711,7 +900,7 @@ class DagInput:
                 f'p_description = "{descr}"',
                 f'p_owner = "{self.user}"',
                 f'p_timezone = timezone("Australia/Melbourne")',
-                f'p_pool = "{pool}"',
+                f'p_pool = "{pool}" # xxx to change',
                 f'env = Variable.get("environment")',
                 f"",
                 f'if env == "prod":',
@@ -752,8 +941,13 @@ class DagInput:
     def runQueryCommand(self):
         """Add hook to run queries."""
 
+        if not self.queries: return
+
+        self.lines.append("    glinda_hook.run([")
+
         for query in self.queries:
-            self.lines.append(f"    glinda_hook.run({query}, autocommit=True)")
+            self.lines.append(f"        {query},")
+        self.lines.append("    ], autocommit=False)")
         self.lines.append("")
 
         # reset list
@@ -777,19 +971,17 @@ class DagInput:
             ]
         )
 
-        for task in self.tasks:
-            self.lines.extend(
-                [
-                    f"    t_{task} = PythonOperator(",
-                    f"        task_id='{task}',",
-                    f"        python_callable={task},",
-                    f"    )",
-                    f"",
-                ]
-            )
+        for task_list in self.tasks:
+            for task in task_list:
+                self.lines.extend(
+                    [
+                        f"    t_{task} = PythonOperator(",
+                        f"        task_id='{task}',",
+                        f"        python_callable={task},",
+                        f"    )",
+                        f"",
+                    ]
+                )
 
-        if self.action == "new_table":
-            self.lines.append("t_" + " >> t_".join(self.tasks))
-        elif self.action == "import":
-            for i in range(0, len(self.tasks), 2):
-                self.lines.append(f"t_{self.tasks[i]} >> t_{self.tasks[i+1]}")
+        for task_list in self.tasks:
+            self.lines.append("t_" + " >> t_".join(task_list))

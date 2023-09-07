@@ -43,7 +43,9 @@ class DocInput:
             # cannot directly compare method to source
             if self.action == "import":
                 # dont worry about tmp
-                if not self.table.schema == "tmp":
+                if self.table.import_method == "fivetran legacy":
+                    self.dagTableImportFivetranTest()
+                elif not self.table.schema == "tmp":
                     self.dagTableImportTest()
             else:
                 self.dagTableTest()
@@ -159,13 +161,62 @@ class DocInput:
         self.lines.extend([
             f"### Rows of {self.table.schema}.{self.table.table_name}",
             f"```SQL",
-            f"SELECT COUNT(*)",
+            f"SELECT count(*)",
             f"FROM {self.table.schema}.{self.table.table_name}",
             f"```",
             f"",
             f"```SQL",
-            f"SELECT COUNT(*)",
+            f"SELECT count(*)",
             f"FROM {source}",
+            f"```"
+        ])
+
+    def dagTableImportFivetranTest(self):
+        """Test DAG for import to PSA as cannot directly compare glinda table to source table."""
+
+        if self.table.sources:
+            source = next(iter(self.table.sources.values()))["source_table"]
+            try:
+                print(source)
+                print(source.split('.')[1])
+                source_table = source.split('.')[1]
+            except IndexError:
+                source_table = 'xxx_table_name'
+        else:
+            source = 'xxx_source_schema_table'
+
+        self.lines.extend([
+            f"### Rows of {self.table.schema}.{self.table.table_name}",
+            f"Source",
+            f"```SQL",
+            f"",
+            f"SELECT count(*)",
+            f"FROM xxx_source_schema.{source_table}",
+            f"",
+            f"```",
+            f"",
+            f"Landing",
+            f"```SQL",
+            f"",
+            f"SELECT count(*) FROM {source}",
+            f"WHERE \"_fivetran_deleted\" IS FALSE",
+            f"",
+            f"```",
+            f"",
+            f"PSA",
+            f"```SQL",
+            f"",
+            f"SELECT count(*) FROM (",
+            f"    SELECT DISTINCT ON (",
+            f"        {', '.join(self.table.business_keys)}",
+            f"        ) *",
+            f"    FROM {self.table.schema}.{self.table.table_name}",
+            f"    ORDER BY",
+            f"        {', '.join(self.table.business_keys)}, load_datetime desc",
+            f") a",
+            f"WHERE",
+            f"    record_deleted IS FALSE",
+            f"",
             f"```"
         ])
 
